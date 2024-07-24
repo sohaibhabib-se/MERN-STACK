@@ -1,5 +1,5 @@
 import './App.css';
-import AddUser from './addUser/AddUser';
+import AddUser from './adduser/AddUser';
 import User from './getUser/User';
 import {RouterProvider, createBrowserRouter} from 'react-router-dom';
 
@@ -18,9 +18,7 @@ function App() {
 
   return (
     <div className="App">
-      <RouterProvider route={route}>
-        <User />
-      </RouterProvider>
+      <RouterProvider router={route}></RouterProvider>
     </div>
   );
 }
