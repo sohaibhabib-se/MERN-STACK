@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
-import './adduser.css'
-import {Link, useNavigate} from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import './update.css'
+import {Link, useNavigate, useParams} from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-const AddUser = () => {
+const UpdateUser = () => {
 
   const users = {
     name: "",
@@ -14,6 +14,8 @@ const AddUser = () => {
 
   const [user, setUser] = useState(users);
   const navigate = useNavigate();
+  const {id} = useParams();
+
 
   const inputHandler = (e) => {
     const {name, value} = e.target
@@ -21,12 +23,21 @@ const AddUser = () => {
     setUser({...user, [name]: value});
   }
 
+  useEffect(() => {
+    axios.get(`http://localhost:8000/api/user/${id}`)
+    .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, [id]);
+
   const submitForm = async(e) => {
     e.preventDefault();
-    await axios.post("http://localhost:8000/api/user", user)
+    await axios.put(`http://localhost:8000/api/update/user/${id}`, user)
     .then((response) => {
       toast.success(response.data.message,{position: 'top-right'});
-      console.log("User created successfully.");
       navigate("/");
     })
     .catch((error) => {
@@ -38,19 +49,19 @@ const AddUser = () => {
     <div className='addUser'>
       {/* <button type="button" class="btn btn-secondary"><i class="fa-solid fa-chevron-left"></i> Back</button> */}
       <Link to="/" type="button" class="btn btn-secondary"><i class="fa-solid fa-chevron-left"></i> Back</Link>
-      <h3>Add New User</h3>
+      <h3>Update User</h3>
       <form className='addUserForm' onSubmit={submitForm}>
         <div className='inputGroup'>
           <label htmlFor='name'>Name:</label>
-          <input type='text' id='name' onChange={inputHandler} name='name' autoComplete='off' placeholder='Enter your name' />
+          <input type='text' id='name' value={user.name} onChange={inputHandler} name='name' autoComplete='off' placeholder='Enter your name' />
         </div>
         <div className='inputGroup'>
           <label htmlFor='email'>E-mail:</label>
-          <input type='text' id='email' onChange={inputHandler} name='email' autoComplete='off' placeholder='Enter your Email' />
+          <input type='text' id='email' value={user.email} onChange={inputHandler} name='email' autoComplete='off' placeholder='Enter your Email' />
         </div>
         <div className='inputGroup'>
           <label htmlFor='address'>Address:</label>
-          <input type='text' id='address' onChange={inputHandler} name='address' autoComplete='off' placeholder='Enter your Address' />
+          <input type='text' id='address' value={user.address} onChange={inputHandler} name='address' autoComplete='off' placeholder='Enter your Address' />
         </div>
         <div className='inputGroup'>
           <button type='submit' className='btn btn-primary'>
@@ -62,4 +73,4 @@ const AddUser = () => {
   )
 }
 
-export default AddUser;
+export default UpdateUser;
